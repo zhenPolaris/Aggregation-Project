@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
  * @Author: zhen
  * @CreateTime: 2023/9/16 0:37
  */
-public enum interfaceInfoStatusEnums {
+public enum InterfaceInfoStatusEnums {
 
     OFFLINE("下线", 0),
     ONLINE("上线", 1);
@@ -18,7 +18,7 @@ public enum interfaceInfoStatusEnums {
     private final String text;
     private final int value;
 
-    interfaceInfoStatusEnums(String text, int value) {
+    InterfaceInfoStatusEnums(String text, int value) {
         this.text = text;
         this.value = value;
     }

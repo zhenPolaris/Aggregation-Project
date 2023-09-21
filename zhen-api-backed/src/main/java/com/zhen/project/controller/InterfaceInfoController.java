@@ -1,9 +1,10 @@
 package com.zhen.project.controller;
 
+
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.gson.Gson;
 import com.zhen.project.annotation.AuthCheck;
 import com.zhen.project.common.*;
 import com.zhen.project.constant.CommonConstant;
@@ -13,6 +14,7 @@ import com.zhen.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.zhen.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.zhen.project.model.entity.InterfaceInfo;
 import com.zhen.project.model.entity.User;
+import com.zhen.project.model.enums.InterfaceInfoStatusEnums;
 import com.zhen.project.service.InterfaceInfoService;
 import com.zhen.project.service.UserService;
 import com.zhen.zhenapiclientsdk.client.ZhenApiClient;
@@ -21,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -228,11 +231,19 @@ public class InterfaceInfoController {
         com.zhen.zhenapiclientsdk.model.User user = new com.zhen.zhenapiclientsdk.model.User();
         user.setUsername("张小涵");
         try {
-            String nameByPostWithJson = zhenApiClient.getNameByPostWithJson(user);
+            String name = zhenApiClient.getNameByPostWithJson(user);
+            if (StrUtil.isBlank(name)){
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"接口验证失败");
+            }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
+        InterfaceInfo interfaceInfo1 = new InterfaceInfo();
+        interfaceInfo1.setId(id);
+        interfaceInfo1.setStatus(InterfaceInfoStatusEnums.ONLINE.getValue());
+        boolean b = interfaceInfoService.updateById(interfaceInfo1);
+        return ResultUtils.success(b);
 
     }
 
@@ -247,8 +258,20 @@ public class InterfaceInfoController {
     @AuthCheck(mustRole = "admin")
     public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest,
                                                       HttpServletRequest request) {
-
-
+        if(idRequest == null || idRequest.getId() < 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        //判断接口是否存在
+        Long id = idRequest.getId();
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
+        if (ObjectUtil.isNull(interfaceInfo)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        InterfaceInfo interfaceInfo1 = new InterfaceInfo();
+        interfaceInfo1.setId(id);
+        interfaceInfo1.setStatus(InterfaceInfoStatusEnums.OFFLINE.getValue());
+        boolean b = interfaceInfoService.updateById(interfaceInfo1);
+        return ResultUtils.success(b);
 
     }
 
