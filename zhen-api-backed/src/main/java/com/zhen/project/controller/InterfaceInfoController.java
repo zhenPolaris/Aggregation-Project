@@ -275,37 +275,6 @@ public class InterfaceInfoController {
 
     }
 
-//    /**
-//     * 测试调用
-//     *
-//     * @param interfaceInfoInvokeRequest
-//     * @param request
-//     * @return
-//     */
-//    @PostMapping("/invoke")
-//    public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
-//                                                     HttpServletRequest request) {
-//        if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-//        }
-//        long id = interfaceInfoInvokeRequest.getId();
-//        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
-//        // 判断是否存在
-//        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
-//        if (oldInterfaceInfo == null) {
-//            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-//        }
-//        if (oldInterfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
-//        }
-//        User loginUser = userService.getLoginUser(request);
-//        String accessKey = loginUser.getAccessKey();
-//        String secretKey = loginUser.getSecretKey();
-//        YuApiClient tempClient = new YuApiClient(accessKey, secretKey);
-//        Gson gson = new Gson();
-//        com.yupi.yuapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.yupi.yuapiclientsdk.model.User.class);
-//        String usernameByPost = tempClient.getUsernameByPost(user);
-//        return ResultUtils.success(usernameByPost);
-//    }
+
 
 }
