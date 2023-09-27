@@ -22,12 +22,14 @@ export default [
       },
     ],
   },
-  // {
-  //   path: '/welcome',
-  //   name: 'welcome',
-  //   icon: 'smile',
-  //   component: './Welcome',
-  // },
+  { path: '/', name: '主页', icon: 'smile', component: './Index' },
+  {
+    path: '/interface_info/:id',
+    name: 'interface info',
+    component: './InterfaceInfo',
+    // 不在菜单页显示
+    hideInMenu: true
+  },
   {
     path: '/admin',
     name: 'admin',
@@ -38,7 +40,7 @@ export default [
         name: '接口管理',
         icon: 'table',
         path: '/admin/interface_info',
-        component: './InterfaceInfo',
+        component: './Admin/InterfaceInfo',
       },
     ],
   },
