@@ -5,6 +5,7 @@ import com.zhen.zhenapiclientsdk.utils.SignUtils;
 
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -21,13 +22,15 @@ import java.nio.charset.StandardCharsets;
 public class NameController {
 
     @GetMapping("/{name}")
-    public String getNameByGet(@PathVariable(value = "name") String name){
+    public String getNameByGet(@PathVariable(value = "name") String name,HttpServletRequest request){
+        System.out.println("request.getHeader(\"color\") =  " + request.getHeader("color"));
         return "GET 你的名字是" + name;
     }
 
 
     @PostMapping
-    public String getNameByPost(@RequestParam String name){
+    public String getNameByPost(@RequestParam String name,HttpServletRequest request){
+
         return "POST 你的名字是" + name;
     }
 

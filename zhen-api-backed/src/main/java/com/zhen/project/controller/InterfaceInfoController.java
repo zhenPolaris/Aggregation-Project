@@ -3,6 +3,7 @@ package com.zhen.project.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhen.project.annotation.AuthCheck;
@@ -10,6 +11,7 @@ import com.zhen.project.common.*;
 import com.zhen.project.constant.CommonConstant;
 import com.zhen.project.exception.BusinessException;
 import com.zhen.project.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.zhen.project.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.zhen.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.zhen.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.zhen.project.model.entity.InterfaceInfo;
@@ -275,6 +277,39 @@ public class InterfaceInfoController {
 
     }
 
+    /**
+     * 在线调用接口
+     * @author zhenzihan
+     * @date 14:42 2023/10/16
+     * @param interfaceInfoInvokeRequest
+     * @param requst
+     * @return com.zhen.project.common.BaseResponse<java.lang.Object>
+     **/
+    @PostMapping("invoke")
+    public BaseResponse<Object> invokeInterface(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest
+                                                ,HttpServletRequest requst) throws UnsupportedEncodingException {
+        if(interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() < 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Long id = interfaceInfoInvokeRequest.getId();
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
+        if (interfaceInfo == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        if (interfaceInfo.getStatus() != InterfaceInfoStatusEnums.ONLINE.getValue()) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口未上线");
+        }
+        User loginUser = userService.getLoginUser(requst);
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+        ZhenApiClient zhenApiClient = new ZhenApiClient("zhen", "zhen");
+        //写死请求
+        String userRequestParams = interfaceInfoInvokeRequest.getRequestParams();
+        com.zhen.zhenapiclientsdk.model.User user = new com.zhen.zhenapiclientsdk.model.User();
+        user.setUsername(userRequestParams);
+        String result = zhenApiClient.getNameByPostWithJson(user);
 
+        return ResultUtils.success(result);
+    }
 
 }
